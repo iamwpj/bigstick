@@ -1,0 +1,6 @@
+.venv
+data/
+test.py
+results/
+.token
+llama-data

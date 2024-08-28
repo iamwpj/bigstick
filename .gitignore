@@ -2,6 +2,7 @@
 __pycache__/
 data/
 test.py
+test.sh
 results/
 .token
 .ssh-session

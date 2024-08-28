@@ -1,6 +1,9 @@
 .venv
+__pycache__/
 data/
 test.py
 results/
 .token
+.ssh-session
 llama-data
+kill.sh

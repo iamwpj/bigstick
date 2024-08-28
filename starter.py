@@ -7,7 +7,7 @@ HF_TOKEN = open('.token','r').read()
 documents = SimpleDirectoryReader("./llama-data/logs").load_data()
 
 # bge-base embedding model
-Settings.embed_model = HuggingFaceEmbedding(model_name="nvidia/NV-Embed-v1")
+Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 
 # ollama
 Settings.llm = Ollama(model="llama3.1:latest", request_timeout=360.0)

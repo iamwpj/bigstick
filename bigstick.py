@@ -1,7 +1,8 @@
 from llama_index.llms.ollama import Ollama
 from llama_index.core.bridge.pydantic import BaseModel
+
 # from llama_index.core.tools import FunctionTool
-from llama_index.core.llms import ChatMessage
+from llama_index.core.llms import ChatMessage, CompletionResponse
 
 
 class AnomalyResults(BaseModel):
@@ -24,7 +25,7 @@ class LoadedModel:
             model=model, request_timeout=timeout, json_mode=json_mode, base_url=base_url
         )
 
-    def Simple(self, query: str):
+    def Simple(self, query: str) -> CompletionResponse:
         return self.llm.complete(query)
 
     def StructChat(self, query: str):

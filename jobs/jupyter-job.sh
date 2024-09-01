@@ -7,5 +7,9 @@ srun \
     --pty bash -l -c \
     "
     ~/bigstick/.venv/bin/jupyter \
-    server --ip 0.0.0.0 -y
+        server \
+            --ip 0.0.0.0 \
+            --NotebookApp.token='' \
+            --NotebookApp.password='' \
+            -y
     "

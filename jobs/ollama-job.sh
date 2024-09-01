@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 export TMPDIR='/tmp'
 
-node=${GPU_NODE:-g005}
-sess=${SESSION_FILE:-~/bigstick/.ssh-session}
+source .env
+
+node=${GPU_NODE:-g001}
+sess=${SESSION_FILE:-'~/bigstick/.ssh-session'}
 
 if [ -f './kill.sh' ]; then
     source kill.sh

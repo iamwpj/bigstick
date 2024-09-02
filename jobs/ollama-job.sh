@@ -24,6 +24,16 @@ rm -- kill.sh
 chmod a+x kill.sh
 
 srun \
+    --job-name container-killer \
+    --partition gpuq \
+    -w "$node" \
+    --pty bash -l -c\
+    "
+    module load docker
+    docker rm -f ollama 2>/dev/null
+    "
+
+srun \
     --job-name ollama-container-run \
     --partition gpuq \
     -w "$node" \

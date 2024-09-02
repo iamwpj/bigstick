@@ -1,3 +1,5 @@
+import requests
+import json
 from llama_index.llms.ollama import Ollama
 from llama_index.core.bridge.pydantic import BaseModel
 
@@ -18,8 +20,8 @@ class LoadedModel:
         self,
         model: str = "bigstick:latest",
         timeout: float = 600.0,
-        json_mode=False,
-        base_url="http://localhost:11434",
+        json_mode: bool = False,
+        base_url: str = "http://localhost:11434",
     ):
         self.llm = Ollama(
             model=model, request_timeout=timeout, json_mode=json_mode, base_url=base_url
@@ -31,3 +33,20 @@ class LoadedModel:
     def StructChat(self, query: str):
         sllm = self.llm.as_structured_llm(AnomalyResults)
         return sllm.chat([ChatMessage(role="user", content=query)])
+
+
+def GenericAPI(
+    url: str = "http://localhost:11434/api/",
+    verb: str = "GET",
+    data: dict = None,
+    headers: dict = None,
+) -> requests.Response:
+    s = requests.Session()
+    req = requests.Request(verb, url=url, data=json.dumps(data))
+    prepped = s.prepare_request(req)
+    if data:
+        prepped.data = data
+
+    if headers:
+        prepped.headers = data
+    return s.send(prepped)

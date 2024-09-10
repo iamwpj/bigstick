@@ -15,6 +15,7 @@ If there are some commonalities that apply across disparate data, list those.
 If there are some differences that apply across disparate data, list those.
 If there are wholly repetitive lines in one file or across files, list those.
 If there are unique identifiers that repeat in various situations, but only rarely within the context of the data, list those.
+If there is a single element that is different than all of the others, this would be an anomaly.
 
 Before looking at any data define a score system for normal data (example: 10) and anomalous data (example: 1). When you interpret a data item assign it a score within context of a line of data and within the contiguous data set (example, the provided file), and a score within the context all of the provided data. If a file or chat doesn't number lines you may prepend a number to each line for referencing. Alternatively if there is a unique identifier contained on each line, reference using that.
 

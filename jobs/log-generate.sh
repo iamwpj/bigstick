@@ -13,5 +13,5 @@ srun \
             mingrammer/flog \
             -f apache_combined \
             -n 1000 \
-            > ~/data/llama-data/logs/generated.log
+            > ~/data/llama-data/data/generated-logs/generated.log
     "

@@ -36,6 +36,7 @@ srun \
 srun \
     --job-name ollama-container-run \
     --partition gpuq \
+    --time 9:00:00 \
     -w "$node" \
     --pty bash -l -c \
     "

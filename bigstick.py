@@ -13,12 +13,12 @@ class AnomalyResults(BaseModel):
     line: int
     data: str
     rank: int
-
+    explaination: str
 
 class LoadedModel:
     def __init__(
         self,
-        model: str = "bigstick:latest",
+        model: str = "bigstick:simple",
         timeout: float = 600.0,
         json_mode: bool = False,
         base_url: str = "http://localhost:11434",

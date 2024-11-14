@@ -15,16 +15,22 @@ class AnomalyResults(BaseModel):
     rank: int
     explaination: str
 
+
 class LoadedModel:
     def __init__(
         self,
         model: str = "bigstick:simple",
-        timeout: float = 600.0,
+        timeout: float = 120.0,
         json_mode: bool = False,
         base_url: str = "http://localhost:11434",
+        **kwargs
     ):
         self.llm = Ollama(
-            model=model, request_timeout=timeout, json_mode=json_mode, base_url=base_url
+            model=model,
+            request_timeout=timeout,
+            json_mode=json_mode,
+            base_url=base_url,
+            **kwargs
         )
 
     def Simple(self, query: str) -> CompletionResponse:

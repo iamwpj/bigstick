@@ -9,6 +9,8 @@ if os.path.exists(expected_env):
 GPU_NODE = os.environ.get("GPU_NODE")
 TRIALS = int(os.environ.get("TRIALS"))
 DATA_PATH = os.environ.get("DATA_PATH", "data")
+DB_FILE = os.environ.get("DB_FILE", f"{DATA_PATH}/reports.sqlite3")
+JOB_NAME = os.environ.get("JOB_NAME", None)
 RESULTS_PATH = os.environ.get("RESULTS_PATH", "results")
 LANGCHAIN_TRACING_V2 = os.environ.get("LANGCHAIN_TRACING_V2", None)
 LANGCHAIN_ENDPOINT = os.environ.get("LANGCHAIN_ENDPOINT", None)

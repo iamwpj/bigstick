@@ -2,10 +2,13 @@
 .env
 __pycache__/
 data/
-test.py
-test.sh
+test.*
 results/
 .token
 .ssh-session
 llama-data
-kill.sh
+kill*.sh
+slurm_jobs/outputs/*
+models/
+models
+.vscode/*

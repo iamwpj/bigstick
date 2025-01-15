@@ -1,23 +1,18 @@
-import src.config as c
 from src.report import ReportBasics, JobReport, QueryReport
-from langchain_ollama import ChatOllama
+import json
 import random
+import string
 import sys
 from datetime import datetime
-from httpx import ReadTimeout
 import math
-import json
+from httpx import ReadTimeout
+from langchain_ollama import ChatOllama
 
-lines = 100
-job_name = "large_random_longrun"
-trials = 1000
-
-# This file is from Elasticsearch
-# https://github.com/elastic/examples/blob/master/Common%20Data%20Formats/apache_logs/apache_logs
-input_data = open(f"{c.DATA_PATH}/apache_logs/1.txt", "r").readlines()[: lines - 1]
-
-# Replacement data of interest
-replacement = '93.164.60.142 - - [17/May/2015:12:05:31 +0000] "GET /../../../etc/shadow HTTP/1.1" 200 32 "-" "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
+job_name = "sliding_context_window"
+maximum = 128_000
+step = 1_000
+description = f"Test the effect of increasing data and increasing context window on query time and accuracy. We will scale from {step} to {maximum} by increasing {step}"
+replacement = "".join(random.choices(string.ascii_uppercase + string.digits, k=16))
 
 # Create an output report
 # Job entry, we will submit this, and then again
@@ -26,7 +21,7 @@ job_report = JobReport(
     uid=job_uid,
     job_name=job_name,
     replacement=replacement,
-    description=f"This is an iterative test of random replacing one line within a sample of {lines} lines. The query will be tried {trials} times.",
+    description=description,
     notes="N/A",
 )
 job_report.submit()
@@ -37,42 +32,45 @@ llm = ChatOllama(
     base_url="http://localhost:11434",
     cache=False,
     repeat_last_n=0,
-    num_ctx=11_000,
+    run_id=job_uid,
+    num_ctx=step,
 )
 
 
-def gen_data():
-    # Calculate a random number within range.
-    ran_replace = random.choice(range(len(input_data)))
+def gen_data(line_count=step):
+    fill = "f" * 16
+    result = [f"{x}={fill}" for x in range(line_count)]
+    ran_replace = random.choice(range(line_count))
 
-    # Swap the data:
-    input_data[ran_replace] = f"{replacement}"
-    return (ran_replace, input_data)
+    result[ran_replace] = f"{ran_replace}={replacement}"
+    return (ran_replace, result)
 
 
-# We like to start at one OK.
-for trial in range(trials + 1):
+# Start at the first increment (step)
+for trial in range(step, maximum, step):
+    llm.num_ctx = trial
+
     interest, query_data = gen_data()
     report = {}
     response_metadata = None
 
     query = f"""
-            Read all of the data, identify the purpose of each item, and compare them to decipher any anomalous data. Some data that appears normal might only be considered anomalous when combined with other data.
-            Respond only with JSON containing the following keys and values:
-                - "rank": <the rank you assigned to the anomaly>,
-                - "line": <the line number of the data>/<the total number of lines in the file>,
-                - "data": <the relevant data>,
-                - "explanation: <the explanation for your choice>
-            Respond in JSON only.
+        Read all of the data, identify the purpose of each item, and compare them to decipher any anomalous data. Some data that appears normal might only be considered anomalous when combined with other data.
+        Respond only with JSON containing the following keys and values:
+            - "rank": <the rank you assigned to the anomaly>,
+            - "line": <the line number of the data>/<the total number of lines in the file>,
+            - "data": <the relevant data>,
+            - "explanation: <the explanation for your choice>
+        Respond in JSON only.
 
-            Input:
-            {query_data}
-            """
+        Input:
+        {query_data}
+        """
 
     start_time = datetime.now()
+
     try:
         resp = llm.invoke(query)
-
         try:
             result = json.loads(resp.content)
             report = {
@@ -95,7 +93,8 @@ for trial in range(trials + 1):
                 "resp_note": e,
                 "query_error": False,
             }
-
+            
+            
     except ReadTimeout or TimeoutError as e:
         report = {
             "query_error": True,
@@ -103,7 +102,6 @@ for trial in range(trials + 1):
             "resp_raw": e,
             "resp_error": True,
         }
-        
 
     header = {
         "uid": trial,
@@ -112,15 +110,16 @@ for trial in range(trials + 1):
             (datetime.now() - start_time).total_seconds() * 100_000
         ),
         "query_raw": "N/A",
-        "query_interest": interest,
+        "query_interest": str([interest, replacement]),
         "query_size_bytes": sys.getsizeof(query),
-        "query_notes": f"Trial {trial}/{trials}",
+        "query_notes": f"Trial {trial}/{maximum}",
     }
 
     qr = QueryReport(**{**header, **report, "job_uid": job_uid})
     if response_metadata:
         qr.resp_metadata = str(response_metadata)
     qr.submit()
+
 
 job_report.end_time = datetime.now()
 job_report.submit()

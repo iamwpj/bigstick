@@ -3,6 +3,7 @@ from datetime import datetime
 import src.db as database
 from string import ascii_uppercase
 from random import choice
+from typing import Any
 
 """
 Each job will create an entry in a table with all of it's 
@@ -15,11 +16,9 @@ Once you instantiate the dataclass object it will insert
 or update the row.
 """
 
-
 @dataclass
 class ReportBasics:
     uid: str = "".join(choice(ascii_uppercase) for i in range(12))
-
 
 @dataclass
 class JobReport:
@@ -48,7 +47,7 @@ class JobReport:
                 {','.join(map(str,params))}
             )
             """
-        database.submit(conn=database.establish(job_name=self.job_name), query=q)
+        database.submit(conn=database.establish(), query=q)
 
     def submit(self):
         data = {}
@@ -66,7 +65,7 @@ class JobReport:
             q = f"INSERT OR REPLACE INTO jobs({column}) VALUES({row})"
 
             insert = database.submit(
-                conn=database.establish(job_name=self.job_name), query=q
+                conn=database.establish(), query=q
             )
 
             if int(insert) > ins_count:
@@ -81,24 +80,27 @@ class JobReport:
 class QueryReport:
     uid: int  # This is likely the iteration count.
     job_name: str
-    query_duration_microseconds: int
+    job_uid: str
     query_notes: str
-    query_raw: str
     query_interest: int
-    query_size_bytes: int
     query_error: bool
+    query_duration_microseconds: str
+    query_size_bytes: str
+    query_raw: str
+
     # All of these are strings since I can't rely
     # on the LLM response to get it right.
     # Only the raw is required, the rest can be updated
     # later.
+
     resp_error: bool
     resp_raw: str
-    resp_rank: str = None
-    resp_line: str = None
-    resp_data: str = None
-    resp_explanation: str = None
     resp_note: str = None
-    
+    resp_metadata: str = None
+    rank: Any = None
+    line: Any = None
+    data: Any = None
+    explanation: Any = None
 
     def __post_init__(self):
         # Build the schema:
@@ -115,7 +117,7 @@ class QueryReport:
                 {','.join(map(str,params))}
             )
             """
-        database.submit(conn=database.establish(job_name=self.job_name), query=q)
+        database.submit(conn=database.establish(), query=q)
 
     def submit(self):
         data = {}
@@ -132,9 +134,7 @@ class QueryReport:
             )
             q = f"INSERT OR REPLACE INTO {self.job_name}({column}) VALUES({row})"
 
-            insert = database.submit(
-                conn=database.establish(job_name=self.job_name), query=q
-            )
+            insert = database.submit(conn=database.establish(), query=q)
 
             if int(insert) > ins_count:
                 ins_count += insert

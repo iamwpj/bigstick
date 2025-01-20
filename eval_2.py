@@ -108,7 +108,7 @@ for trial in range(1, trials + 1):
         "uid": trial,
         "job_name": job_name,
         "query_duration_microseconds": math.floor(
-            (datetime.now() - start_time).total_seconds() * 100_000
+            (datetime.now() - start_time).total_seconds() * 1_000_000
         ),
         "query_raw": "N/A",
         "query_interest": interest,

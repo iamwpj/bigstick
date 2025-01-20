@@ -16,7 +16,7 @@ increment = 20
 input_data = open(f"{c.DATA_PATH}/apache_logs/1.txt", "r").readlines()
 
 # Replacement data of interest
-replacement = '93.164.60.142 - - [17/May/2015:12:05:31 +0000] "GET /../../../etc/shadow HTTP/1.1" 200 32 "-" "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
+replacement = '93.164.60.142 - - [17/May/2015:12:05:31 +0000] "GET /../../../etc/shadow HTTP/1.1" 200 32 "-" "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"'
 
 job_uid = ReportBasics.uid
 job_report = JobReport(
@@ -129,7 +129,7 @@ for trial in range(trials + 1):
             "uid": trial + i,
             "job_name": job_name,
             "query_duration_microseconds": math.floor(
-                (datetime.now() - start_time).total_seconds() * 100_000
+                (datetime.now() - start_time).total_seconds() * 1_000_000
             ),
             "query_raw": "N/A",
             "query_interest": interest,

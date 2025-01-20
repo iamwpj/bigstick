@@ -1,4 +1,3 @@
-import src.config as c
 from src.report import ReportBasics, JobReport, QueryReport
 from string import ascii_uppercase as ABC
 import sys
@@ -52,7 +51,7 @@ for trial in range(1, trials + 1):
         Respond in JSON only.
 
     Input:
-    {json.dumps(sample)}
+    {json.dumps(sample,indent=2)}
     """
 
     start_time = datetime.now()
@@ -92,7 +91,7 @@ for trial in range(1, trials + 1):
         "uid": trial,
         "job_name": job_name,
         "query_duration_microseconds": math.floor(
-            (datetime.now() - start_time).total_seconds() * 100_000
+            (datetime.now() - start_time).total_seconds() * 1_000_000
         ),
         "query_raw": "N/A",
         "query_interest": interest,
@@ -103,7 +102,7 @@ for trial in range(1, trials + 1):
     if response_metadata:
         qr.resp_metadata = str(response_metadata)
     # qr.submit()
-    print(qr.query_duration_microseconds / 100_000, qr.query_notes, qr.query_error)
+    print(qr.query_duration_microseconds / 1_000_000, qr.query_notes, qr.query_error)
 
 job_report.end_time = datetime.now()
 # job_report.submit()

@@ -3,7 +3,8 @@ export TMPDIR='/tmp'
 
 srun \
     --job-name "$(whoami)-jupyter" \
-    --partition defq \
+    --partition gpuq \
+    --exclude g00[1,2] \
     --time 9:00:00 \
     --pty bash -l -c \
     "

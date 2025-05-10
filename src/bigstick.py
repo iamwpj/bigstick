@@ -2,6 +2,7 @@ import requests
 import json
 from llama_index.llms.ollama import Ollama
 from llama_index.core.bridge.pydantic import BaseModel
+import src.config as c
 
 # from llama_index.core.tools import FunctionTool
 from llama_index.core.llms import ChatMessage, CompletionResponse
@@ -19,7 +20,7 @@ class AnomalyResults(BaseModel):
 class LoadedModel:
     def __init__(
         self,
-        model: str = "bigstick:simple",
+        model: str = c.MODEL,
         timeout: float = 120.0,
         json_mode: bool = False,
         base_url: str = "http://localhost:11434",

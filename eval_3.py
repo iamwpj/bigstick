@@ -14,7 +14,7 @@ trials = 1000
 
 # This file is from Elasticsearch
 # https://github.com/elastic/examples/blob/master/Common%20Data%20Formats/apache_logs/apache_logs
-input_data = open(f"{c.DATA_PATH}/apache_logs/1.txt", "r").readlines()[: lines - 1]
+input_data = open(f"{c.DATA_PATH}/apache_logs/1.txt", "r").read().splitlines()[: lines - 1]
 
 # Replacement data of interest
 replacement = '93.164.60.142 - - [17/May/2015:12:05:31 +0000] "GET /../../../etc/shadow HTTP/1.1" 200 32 "-" "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"'
@@ -55,6 +55,7 @@ for trial in range(trials + 1):
     interest, query_data = gen_data()
     report = {}
     response_metadata = None
+    request_data = "\n".join(query_data)
 
     query = f"""
             Read all of the data, identify the purpose of each item, and compare them to decipher any anomalous data. Some data that appears normal might only be considered anomalous when combined with other data.
@@ -66,7 +67,7 @@ for trial in range(trials + 1):
             Respond in JSON only.
 
             Input:
-            {query_data}
+            {request_data}
             """
 
     start_time = datetime.now()

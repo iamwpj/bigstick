@@ -1,7 +1,8 @@
 from llama_index.embeddings.ollama import OllamaEmbedding
+import src.config as c
 
 ollama_embedding = OllamaEmbedding(
-    model_name="llama2",
+    model_name=c.MODEL,
     base_url="http://localhost:11434",
     ollama_additional_kwargs={"mirostat": 0},
 )

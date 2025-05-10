@@ -12,3 +12,5 @@ slurm_jobs/outputs/*
 models/
 models
 .vscode/*
+._*
+.DS_Store
